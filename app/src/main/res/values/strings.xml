@@ -1,3 +1,60 @@
 <resources>
-    <string name="app_name">skysave</string>
+    <string name="app_name">SkySave</string>
+
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_alias">Alias</string>
+
+    <string name="splash_screen_label">Splash Screen</string>
+
+    <string name="login_label">Login</string>
+    <string name="login_title">Login</string>
+    <string name="login_other_login_method">or Sign In with your email</string>
+    <string name="to_login"><u>Do you already have an account? Sign in here.</u></string>
+    <string name="login_button_google">Sign In with Google</string>
+    <string name="login_button">Sign In</string>
+
+    <string name="register_label">Register</string>
+    <string name="register_title">Register</string>
+    <string name="to_auth"><u>You don\'t have an account? Register here.</u></string>
+    <string name="register_button">Register</string>
+
+    <string name="forgot_password_label">Forgot password</string>
+    <string name="forgot_password_title">Forgot password</string>
+    <string name="to_reset"><u>You forgot your password? Reset it here.</u></string>
+    <string name="reset_button">Reset</string>
+
+    <string name="splash_screen_logo_description">App logo</string>
+
+    <string name="files_title">Files</string>
+    <string name="files_no_files">No files added!</string>
+    <string name="files_no_files_found">No files found!</string>
+    <string name="file_name">file name.extension</string>
+    <string name="file_star">star</string>
+    <string name="file_view">view</string>
+    <string name="file_download">download</string>
+    <string name="file_download_size">100 MB</string>
+    <string name="file_share">share</string>
+    <string name="file_delete">delete</string>
+    <string name="file_preview">file preview</string>
+    <string name="file_player">file player</string>
+
+    <string name="search_hint">Search…</string>
+    <string name="space_used">0.41 GB</string>
+    <string name="space_total">1 GB</string>
+
+    <string name="trash_title">Trash</string>
+    <string name="trash_restore">Restore</string>
+    <string name="trash_remove">Remove</string>
+    <string name="trash_no_files">No files in trash!</string>
+
+    <string name="profile_title">Profile</string>
+    <string name="profile_icon_desc">Profile icon</string>
+    <string name="profile_alias">alias</string>
+    <string name="profile_email">Email:</string>
+    <string name="profile_file_limit">File limit: 50MB</string>
+    <string name="profile_storage_limit">Storage limit: 1GB</string>
+    <string name="profile_logout">Log out</string>
+    <string name="profile_app_support_text">App\'s source code: </string>
+    <string name="profile_app_support_icon">GitHub icon</string>
 </resources>

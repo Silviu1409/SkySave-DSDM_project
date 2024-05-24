@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/SplashScreen">
+
+    <fragment
+        android:id="@+id/SplashScreen"
+        android:name="com.example.skysave.auth.SplashScreen"
+        android:label="@string/splash_screen_label"
+        tools:layout="@layout/fragment_splash_screen">
+
+        <action
+            android:id="@+id/action_SplashScreen_to_Login"
+            app:destination="@id/Login" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/Login"
+        android:name="com.example.skysave.auth.Login"
+        android:label="@string/login_label"
+        tools:layout="@layout/fragment_login">
+
+        <action
+            android:id="@+id/action_Login_to_Register"
+            app:destination="@id/Register" />
+        <action
+            android:id="@+id/action_Login_to_ForgotPassword"
+            app:destination="@id/ForgotPassword" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/Register"
+        android:name="com.example.skysave.auth.Register"
+        android:label="@string/register_label"
+        tools:layout="@layout/fragment_register">
+
+        <action
+            android:id="@+id/action_Register_to_Login"
+            app:destination="@id/Login" />
+        <action
+            android:id="@+id/action_Register_to_ForgotPassword"
+            app:destination="@id/ForgotPassword" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ForgotPassword"
+        android:name="com.example.skysave.auth.ForgotPassword"
+        android:label="@string/forgot_password_label"
+        tools:layout="@layout/fragment_forgot_password">
+
+        <action
+            android:id="@+id/action_ForgotPassword_to_Login"
+            app:destination="@id/Login" />
+        <action
+            android:id="@+id/action_ForgotPassword_to_Register"
+            app:destination="@id/Register" />
+    </fragment>
+</navigation>
