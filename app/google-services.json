@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "283905542462",
+    "project_id": "skysave",
+    "storage_bucket": "skysave.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:283905542462:android:f0e993e27d33beba9a046f",
+        "android_client_info": {
+          "package_name": "com.example.skysave"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "283905542462-tab633li6m4aq6c8da7tti6u1f4eethu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.skysave",
+            "certificate_hash": "668908604aebf0994fac14ccf69b8c9c042db1ad"
+          }
+        },
+        {
+          "client_id": "283905542462-rbb3lrc7brcuiskf5iom19p7o304cp13.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqPjYVtNrNwY-4PXU3AsYSwqavxEYgOyo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "283905542462-e87ju0aq9l5udl5933dg2u2g1aj9i4re.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
