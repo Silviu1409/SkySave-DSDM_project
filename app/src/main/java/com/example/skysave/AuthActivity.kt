@@ -1,7 +1,7 @@
 package com.example.skysave
 
 import android.app.Activity
-//import android.content.Intent
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -148,12 +148,9 @@ class AuthActivity : AppCompatActivity() {
                                                     Log.d(tag, "Created folder for user")
 
                                                     val newUser = User(user.uid, userData["email"].toString(), userData["alias"].toString(), listOf())
-
-                                                    Log.d(tag, user.toString())
-
-                                                    //val intent = Intent(this@AuthActivity, MainActivity::class.java)
-                                                    //intent.putExtra("user", newUser)
-                                                    //startActivity(intent)
+                                                    val intent = Intent(this@AuthActivity, MainActivity::class.java)
+                                                    intent.putExtra("user", newUser)
+                                                    startActivity(intent)
                                                 }
                                                 .addOnFailureListener { e ->
                                                     Log.e(errTag, "Error creating folder: ${e.message}")
@@ -187,11 +184,9 @@ class AuthActivity : AppCompatActivity() {
                                             document.get("starred_files") as? List<String> ?: listOf()
                                         )
 
-                                        Log.d(tag, user.toString());
-
-                                        //val intent = Intent(this, MainActivity::class.java)
-                                        //intent.putExtra("user", dateUser)
-                                        //startActivity(intent)
+                                        val intent = Intent(this, MainActivity::class.java)
+                                        intent.putExtra("user", dateUser)
+                                        startActivity(intent)
                                     }
                                 }
                                 .addOnFailureListener { e ->
@@ -215,8 +210,6 @@ class AuthActivity : AppCompatActivity() {
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
-
-        Log.d(tag, gso.toString())
 
         googleSignInClient = GoogleSignIn.getClient(this, gso)
         googleSignInClient.signOut()

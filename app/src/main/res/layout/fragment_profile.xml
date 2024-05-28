@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/profile"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:paddingBottom="25dp"
+        tools:context=".main.Profile">
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/profile_icon"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_marginTop="75dp"
+            android:background="@color/white"
+            android:contentDescription="@string/profile_icon_desc"
+            android:scaleType="centerCrop"
+            android:src="@drawable/icon_profile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/profile_icon_edit_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="-10dp"
+            android:layout_marginTop="-8dp"
+            android:backgroundTint="#00FFFFFF"
+            android:foregroundTint="#00FFFFFF"
+            android:src="@android:drawable/ic_menu_edit"
+            app:layout_constraintStart_toEndOf="@+id/profile_icon"
+            app:layout_constraintTop_toTopOf="@+id/profile_icon"
+            tools:ignore="ImageContrastCheck" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/profile_alias"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/profile_alias"
+            android:textColor="@color/black"
+            android:textSize="22sp"
+            android:singleLine="true"
+            android:imeOptions="actionDone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_icon" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/profile_alias_icon"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="-5dp"
+            android:layout_marginTop="5dp"
+            android:backgroundTint="#00FFFFFF"
+            android:foregroundTint="#00FFFFFF"
+            android:src="@android:drawable/ic_menu_edit"
+            app:layout_constraintStart_toEndOf="@+id/profile_alias"
+            app:layout_constraintTop_toTopOf="@+id/profile_alias"
+            tools:ignore="ImageContrastCheck" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/profile_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="75dp"
+            android:layout_marginTop="50dp"
+            android:text="@string/profile_email"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_alias" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/profile_file_limit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="75dp"
+            android:layout_marginTop="50dp"
+            android:text="@string/profile_file_limit"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_email" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/profile_storage_limit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="75dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/profile_storage_limit"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_file_limit" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/profile_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:background="@android:color/holo_blue_dark"
+            android:paddingLeft="20sp"
+            android:paddingTop="10sp"
+            android:paddingRight="20sp"
+            android:paddingBottom="10sp"
+            android:text="@string/profile_logout"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/profile_storage_limit"
+            tools:ignore="TextContrastCheck" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/profile_app_support_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="-50dp"
+            android:layout_marginTop="50dp"
+            android:text="@string/profile_app_support_text"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_logout" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/profile_app_support_icon"
+            android:layout_width="50sp"
+            android:layout_height="50sp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="-13dp"
+            android:backgroundTint="#00FFFFFF"
+            android:contentDescription="@string/profile_app_support_icon"
+            android:padding="0dp"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:src="@drawable/icon_github"
+            android:tint="@color/black"
+            app:layout_constraintStart_toEndOf="@+id/profile_app_support_text"
+            app:layout_constraintTop_toTopOf="@+id/profile_app_support_text" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

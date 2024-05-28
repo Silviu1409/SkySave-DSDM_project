@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/nav_menu">
+
+    <item
+        android:id="@+id/nav_files"
+        android:icon="@drawable/icon_files"
+        android:title="@string/files_title" />
+
+    <item
+        android:id="@+id/nav_trash"
+        android:icon="@drawable/icon_trash"
+        android:title="@string/trash_title" />
+
+    <item
+        android:id="@+id/add_placeholder"
+        android:title="" />
+
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/icon_profile"
+        android:title="@string/profile_title" />
+
+</menu>
