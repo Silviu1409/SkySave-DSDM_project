@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="25dp"
+    android:layout_marginVertical="15dp"
+    android:background="@drawable/item_file_background"
+    android:orientation="vertical"
+    android:paddingHorizontal="12.5dp"
+    android:paddingVertical="7.5dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/file_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerInParent="true"
+            android:layout_toStartOf="@+id/file_options"
+            android:ellipsize="middle"
+            android:fontFamily="sans-serif-light"
+            android:maxLines="1"
+            android:text="@string/file_name"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/file_options"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="center"
+            android:layout_marginStart="15dp"
+            android:backgroundTint="@color/white"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="4dp"
+            app:cardElevation="4dp"
+            app:cardUseCompatPadding="true"
+            app:contentPadding="5dp">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/file_star"
+                    android:layout_width="wrap_content"
+                    android:layout_height="26sp"
+                    android:adjustViewBounds="true"
+                    android:backgroundTint="#00000000"
+                    android:contentDescription="@string/file_star"
+                    android:padding="0dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/icon_starred_empty"
+                    tools:ignore="TouchTargetSizeCheck,ImageContrastCheck" />
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/file_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="26sp"
+                    android:layout_marginStart="10dp"
+                    android:adjustViewBounds="true"
+                    android:backgroundTint="#00000000"
+                    android:contentDescription="@string/file_view"
+                    android:padding="0dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/icon_view"
+                    android:visibility="gone"
+                    app:tint="@color/black"
+                    tools:ignore="TouchTargetSizeCheck,ImageContrastCheck"
+                    tools:visibility="visible" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/file_download"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:adjustViewBounds="true"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/file_download_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="24sp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerInParent="true"
+                        android:layout_toStartOf="@+id/file_download_size"
+                        android:backgroundTint="#00000000"
+                        android:contentDescription="@string/file_download"
+                        android:padding="0dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/icon_download"
+                        app:tint="@android:color/holo_blue_dark"
+                        tools:ignore="TouchTargetSizeCheck" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/file_download_size"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/file_download_size"
+                        android:textColor="@color/black"
+                        android:textSize="11sp" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/file_share"
+                    android:layout_width="wrap_content"
+                    android:layout_height="26sp"
+                    android:layout_marginStart="10dp"
+                    android:adjustViewBounds="true"
+                    android:backgroundTint="#00000000"
+                    android:contentDescription="@string/file_share"
+                    android:padding="0dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/icon_shared"
+                    app:tint="@android:color/holo_green_dark"
+                    tools:ignore="TouchTargetSizeCheck" />
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/file_trash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="26sp"
+                    android:layout_marginStart="10dp"
+                    android:adjustViewBounds="true"
+                    android:backgroundTint="#00000000"
+                    android:contentDescription="@string/file_delete"
+                    android:padding="0dp"
+                    android:scaleType="fitCenter"
+                    android:scaleY="1.1"
+                    android:src="@drawable/icon_trash"
+                    app:tint="#FF0000"
+                    tools:ignore="TouchTargetSizeCheck" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </RelativeLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/file_content"
+        android:layout_width="300dp"
+        android:layout_height="180dp"
+        android:layout_gravity="center"
+        app:cardBackgroundColor="#00000000"
+        app:cardCornerRadius="12dp"
+        app:strokeColor="@color/black"
+        app:strokeWidth="2dp">
+
+        <com.google.android.exoplayer2.ui.PlayerView
+            android:id="@+id/file_player"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/file_player"
+            android:fitsSystemWindows="true"
+            android:keepScreenOn="true"
+            android:visibility="invisible"
+            app:resize_mode="fill"
+            app:surface_type="texture_view"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/file_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/file_preview"
+            android:visibility="invisible" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

@@ -1,7 +1,7 @@
 package com.example.skysave.auth
 
 import android.content.Context
-//import android.content.Intent
+import android.content.Intent
 import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -15,7 +15,7 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.example.skysave.datatypes.User
 import com.example.skysave.AuthActivity
-//import com.example.skysave.MainActivity
+import com.example.skysave.MainActivity
 import com.example.skysave.R
 import com.example.skysave.databinding.FragmentLoginBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -85,11 +85,9 @@ class Login : Fragment() {
                                                 document.get("starred_files") as? List<String> ?: listOf()
                                             )
 
-                                            Log.d(tag, user.toString())
-
-                                            //val intent = Intent(activity, MainActivity::class.java)
-                                            //intent.putExtra("user", date)
-                                            //startActivity(intent)
+                                            val intent = Intent(activity, MainActivity::class.java)
+                                            intent.putExtra("user", date)
+                                            startActivity(intent)
                                         }
                                     }
                                     .addOnFailureListener { e ->

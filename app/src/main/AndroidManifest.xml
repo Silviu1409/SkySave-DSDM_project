@@ -41,21 +41,21 @@
             </intent-filter>
         </activity>
 
-<!--        <activity-->
-<!--            android:name=".MainActivity"-->
-<!--            android:configChanges="orientation|screenSize|layoutDirection|keyboardHidden"-->
-<!--            android:exported="true" >-->
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|layoutDirection|keyboardHidden"
+            android:exported="true" >
 
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.VIEW" />-->
-<!--                <category android:name="android.intent.category.DEFAULT" />-->
-<!--                <category android:name="android.intent.category.BROWSABLE" />-->
-<!--                <data-->
-<!--                    android:scheme="https"-->
-<!--                    android:host="skysave.com"-->
-<!--                    android:pathPrefix="/files" />-->
-<!--            </intent-filter>-->
-<!--        </activity>-->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="https"
+                    android:host="skysave.com"
+                    android:pathPrefix="/files" />
+            </intent-filter>
+        </activity>
 
     </application>
 
