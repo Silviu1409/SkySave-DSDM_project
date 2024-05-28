@@ -1,7 +1,7 @@
 package com.example.skysave.auth
 
 import android.annotation.SuppressLint
-//import android.content.Intent
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.navigation.fragment.findNavController
 import com.example.skysave.AuthActivity
-//import com.example.skysave.MainActivity
+import com.example.skysave.MainActivity
 import com.example.skysave.R
 import com.example.skysave.databinding.FragmentSplashScreenBinding
 
@@ -46,8 +46,8 @@ class SplashScreen : Fragment() {
 
             override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
                 if (authActivityContext.getUser() != null) {
-                    //val intent = Intent(activity, MainActivity::class.java)
-                    //startActivity(intent)
+                    val intent = Intent(activity, MainActivity::class.java)
+                    startActivity(intent)
                 } else {
                     findNavController().navigate(R.id.action_SplashScreen_to_Login)
                 }
