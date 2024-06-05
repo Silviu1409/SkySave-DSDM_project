@@ -25,6 +25,7 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -42,14 +43,45 @@ import java.util.*
 import kotlin.math.roundToInt
 
 
-class FileAdapter(private val context: Context?, private val fragment: Files, private val files: ArrayList<StorageReference>) : RecyclerView.Adapter<FileViewHolder>(), Filterable, Player.Listener {
+class FileAdapter(private val context: Context?, private val fragment: Files, private val files: ArrayList<StorageReference>, private var starredFiles: List<String>) : RecyclerView.Adapter<FileViewHolder>(), Filterable, Player.Listener {
 
     var filteredFileItems = files
 
     private val mainActivityContext = (context as MainActivity)
-    private var starredFiles: List<String> = mainActivityContext.getUser()?.starred_files ?: listOf()
     private val fileDir = mainActivityContext.getFileDir()
 
+    interface OnFileLongClickListener {
+        fun onFileLongClick(position: Int)
+    }
+
+    private var fileLongClickListener: OnFileLongClickListener? = null
+
+    fun setOnFileLongClickListener(listener: OnFileLongClickListener) {
+        fileLongClickListener = listener
+    }
+
+    fun updateStarredFiles(newStarredFiles: List<String>) {
+        val oldStarredFiles = starredFiles
+        starredFiles = newStarredFiles
+
+        val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun getOldListSize(): Int = files.size
+            override fun getNewListSize(): Int = files.size
+
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return files[oldItemPosition].toString() == files[newItemPosition].toString()
+            }
+
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                val file = files[oldItemPosition]
+                val wasStarred = oldStarredFiles.contains(file.toString())
+                val isStarred = newStarredFiles.contains(file.toString())
+                return wasStarred == isStarred
+            }
+        })
+
+        diffResult.dispatchUpdatesTo(this)
+    }
 
     private val filter = object : Filter() {
         override fun performFiltering(constraint: CharSequence?): FilterResults {
@@ -108,6 +140,11 @@ class FileAdapter(private val context: Context?, private val fragment: Files, pr
     override fun onBindViewHolder(holder: FileViewHolder, position: Int) {
         val file = filteredFileItems[position]
         holder.fileNameView.text = file.name
+
+        holder.itemView.setOnLongClickListener {
+            fileLongClickListener?.onFileLongClick(holder.bindingAdapterPosition)
+            true
+        }
 
         val localFile = File(fileDir, file.name)
         val tempLocalFile = File(context!!.cacheDir, file.name)
@@ -271,6 +308,7 @@ class FileAdapter(private val context: Context?, private val fragment: Files, pr
                     .update("starred_files", starredFiles)
                     .addOnSuccessListener {
                         Log.d(mainActivityContext.getTag(), "Added starred file ref to db")
+                        mainActivityContext.getSharedPreferencesUser().edit().putStringSet("starred_files", HashSet(mainActivityContext.getUser()!!.starred_files)).apply()
                     }
                     .addOnFailureListener { e ->
                         Log.e(mainActivityContext.getErrTag(), "Failed to add starred file ref to db: ${e.message}")
@@ -306,6 +344,7 @@ class FileAdapter(private val context: Context?, private val fragment: Files, pr
                     .update("starred_files", starredFiles)
                     .addOnSuccessListener {
                         Log.d(mainActivityContext.getTag(), "Removed starred file ref from db")
+                        mainActivityContext.getSharedPreferencesUser().edit().putStringSet("starred_files", HashSet(mainActivityContext.getUser()!!.starred_files)).apply()
                     }
                     .addOnFailureListener { e ->
                         Log.e(mainActivityContext.getErrTag(), "Failed to remove starred file ref from db: ${e.message}")
@@ -504,7 +543,20 @@ class FileAdapter(private val context: Context?, private val fragment: Files, pr
         notifyItemInserted(index)
     }
 
+    fun removeItem(oldFile: StorageReference) {
+        val position = files.indexOf(oldFile)
+        if (position != -1) {
+            files.removeAt(position)
+            notifyItemRemoved(position)
+            notifyItemRangeChanged(position, files.size)
+        }
+    }
+
     override fun getItemCount() = filteredFileItems.size
+
+    fun getItem(position: Int): StorageReference {
+        return files[position]
+    }
 
     private fun Int.dpToPx(): Int {
         val density = Resources.getSystem().displayMetrics.density

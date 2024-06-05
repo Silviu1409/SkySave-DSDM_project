@@ -35,5 +35,15 @@ class FileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         filePlayerView.setShowNextButton(false)
         filePlayerView.setShowPreviousButton(false)
+
+        itemView.setOnLongClickListener {
+            val position = bindingAdapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                itemView.isSelected = true
+                true
+            } else {
+                false
+            }
+        }
     }
 }

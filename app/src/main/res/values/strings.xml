@@ -55,6 +55,14 @@
     <string name="profile_file_limit">File limit: 50MB</string>
     <string name="profile_storage_limit">Storage limit: 1GB</string>
     <string name="profile_logout">Log out</string>
-    <string name="profile_app_support_text">App\'s source code: </string>
-    <string name="profile_app_support_icon">GitHub icon</string>
+
+    <string name="dialog_copy">Copy</string>
+    <string name="dialog_move">Move</string>
+    <string name="dialog_delete">Delete</string>
+
+    <string name="file_explorer_current_path">Current path: </string>
+    <string name="current_path">Current path: %1$s</string>
+    <string name="file_explorer_to_parent">Go to parent folder</string>
+    <string name="file_explorer_create_folder">Create folder</string>
+    <string name="file_explorer_select_folder">Select this folder</string>
 </resources>

@@ -134,17 +134,11 @@ class Profile : Fragment() {
 
         binding.profileLogout.setOnClickListener {
             mainActivityContext.removePreferencesUser()
+            mainActivityContext.removePreferencesStorage()
             mainActivityContext.getAuth().signOut()
 
             val intent = Intent(activity, AuthActivity::class.java)
             intent.putExtra("logout", true)
-            startActivity(intent)
-        }
-
-        binding.profileAppSupportIcon.setOnClickListener {
-            val url = "https://github.com/Silviu1409/SkySave"
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(url)
             startActivity(intent)
         }
     }

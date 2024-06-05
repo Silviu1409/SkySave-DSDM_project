@@ -40,8 +40,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.math.BigDecimal
-import java.math.RoundingMode
 import kotlin.math.log10
 import kotlin.math.pow
 
@@ -148,6 +146,7 @@ class MainActivity : AppCompatActivity() {
                 sharedPreferencesUser.getString("alias", "")!!,
                 sharedPreferencesUser.getStringSet("starred_files", setOf<String>())?.toList()!!
             )
+            updateStarredFiles(user!!.starred_files)
         } else {
             @Suppress("DEPRECATION")
             user = intent.getSerializableExtra("user") as? User
@@ -161,6 +160,8 @@ class MainActivity : AppCompatActivity() {
                 sharedPreferencesUser.edit().putString("alias", user!!.alias).apply()
                 sharedPreferencesUser.edit().putString("email", user!!.email).apply()
                 sharedPreferencesUser.edit().putStringSet("starred_files", HashSet(user!!.starred_files)).apply()
+
+                updateStarredFiles(user!!.starred_files)
             }
         }
 
@@ -227,84 +228,82 @@ class MainActivity : AppCompatActivity() {
 
         notificationUploadChannel("upload_notification_channel", NotificationManager.IMPORTANCE_LOW)
 
-        val fileRef = folderRef.child("files/$fileName")
+        val fragment = supportFragmentManager.fragments.first().childFragmentManager.fragments.first()
+        if (fragment is Files) {
+            val fileRef = fragment.getCurrentFolder().child(fileName)
 
-        fileRef.downloadUrl
-            .addOnSuccessListener {
-                Log.w(tag, "File already exists!")
-                Toast.makeText(this, "File already uploaded!", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener {
-                Log.d(tag, "File doesn't already exist.")
+            fileRef.downloadUrl
+                .addOnSuccessListener {
+                    Log.w(tag, "File already exists!")
+                    Toast.makeText(this, "File already uploaded!", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener {
+                    Log.d(tag, "File doesn't already exist.")
 
-                val uploadTask = fileRef.putFile(selectedFileUri)
+                    val uploadTask = fileRef.putFile(selectedFileUri)
 
-                val notificationId = 0
+                    val notificationId = 0
 
-                val notificationBuilder = NotificationCompat.Builder(this, "upload_notification_channel")
-                    .setContentTitle("Uploading $fileName")
-                    .setSmallIcon(R.drawable.icon_notification)
-                    .setProgress(100, 0, false)
-                    .setPriority(NotificationCompat.PRIORITY_LOW)
+                    val notificationBuilder = NotificationCompat.Builder(this, "upload_notification_channel")
+                        .setContentTitle("Uploading $fileName")
+                        .setSmallIcon(R.drawable.icon_notification)
+                        .setProgress(100, 0, false)
+                        .setPriority(NotificationCompat.PRIORITY_LOW)
 
-                val notificationManager = getSystemService(NotificationManager::class.java)
-                notificationManager.notify(notificationId, notificationBuilder.build())
+                    val notificationManager = getSystemService(NotificationManager::class.java)
+                    notificationManager.notify(notificationId, notificationBuilder.build())
 
-                uploadTask
-                    .addOnProgressListener { snapshot ->
-                        val progress = (100.0 * snapshot.bytesTransferred / snapshot.totalByteCount).toInt()
-                        notificationBuilder.setProgress(100, progress, false).setContentText("$progress%")
-                        notificationManager.notify(notificationId, notificationBuilder.build())
-                    }
-                    .addOnSuccessListener { snapshot ->
-                        notificationBuilder.setContentText("Upload complete")
-                            .setProgress(0, 0, false)
-                        notificationManager.notify(notificationId, notificationBuilder.build())
+                    uploadTask
+                        .addOnProgressListener { snapshot ->
+                            val progress = (100.0 * snapshot.bytesTransferred / snapshot.totalByteCount).toInt()
+                            notificationBuilder.setProgress(100, progress, false).setContentText("$progress%")
+                            notificationManager.notify(notificationId, notificationBuilder.build())
+                        }
+                        .addOnSuccessListener { snapshot ->
+                            notificationBuilder.setContentText("Upload complete")
+                                .setProgress(0, 0, false)
+                            notificationManager.notify(notificationId, notificationBuilder.build())
 
-                        notificationUploadChannel("upload_notification_channel_2", NotificationManager.IMPORTANCE_HIGH)
+                            notificationUploadChannel("upload_notification_channel_2", NotificationManager.IMPORTANCE_HIGH)
 
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://skysave.com/files"), applicationContext, MainActivity::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                        val pendingIntent = PendingIntent.getActivity(applicationContext, 1, intent, PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE)
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://skysave.com/files"), applicationContext, MainActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                            val pendingIntent = PendingIntent.getActivity(applicationContext, 1, intent, PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE)
 
-                        val completedNotificationBuilder = NotificationCompat.Builder(applicationContext, "upload_notification_channel_2")
-                            .setSmallIcon(R.drawable.icon_notification)
-                            .setContentTitle("File Upload Complete")
-                            .setContentText("Your file has been uploaded successfully.")
-                            .setPriority(NotificationCompat.PRIORITY_HIGH)
-                            .setContentIntent(pendingIntent)
-                            .setAutoCancel(true)
-                        notificationManager.notify(notificationId, completedNotificationBuilder.build())
+                            val completedNotificationBuilder = NotificationCompat.Builder(applicationContext, "upload_notification_channel_2")
+                                .setSmallIcon(R.drawable.icon_notification)
+                                .setContentTitle("File Upload Complete")
+                                .setContentText("Your file has been uploaded successfully.")
+                                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                                .setContentIntent(pendingIntent)
+                                .setAutoCancel(true)
+                            notificationManager.notify(notificationId, completedNotificationBuilder.build())
 
-                        val fragment = supportFragmentManager.fragments.first()
-                        val wantedFragment = fragment.childFragmentManager.fragments.first()
-
-                        if (wantedFragment is Files) {
                             val newFile = snapshot.metadata?.reference
 
                             if (newFile != null) {
-                                wantedFragment.refreshRecyclerView(newFile)
+                                fragment.refreshRecyclerView(newFile)
                             } else {
                                 Log.w(tag, "RecycleView not updated.")
                             }
+
+                            folderSize += fileSize
+                            changePreferencesFolderSize()
+                            setStorageSpaceUsed(getReadableFileSize(folderSize.toDouble()))
+
+                            Log.d(tag, "File uploaded")
                         }
+                        .addOnFailureListener { e ->
+                            notificationBuilder
+                                .setContentText("Upload failed: ${e.message}")
+                                .setProgress(0, 0, false)
 
-                        folderSize += fileSize
-                        changePreferencesFolderSize()
-                        setStorageSpaceUsed(getReadableFileSize(folderSize.toDouble()))
+                            notificationManager.notify(notificationId, notificationBuilder.build())
 
-                        Log.d(tag, "File uploaded")
-                    }
-                    .addOnFailureListener { e ->
-                        notificationBuilder
-                            .setContentText("Upload failed: ${e.message}")
-                            .setProgress(0, 0, false)
-
-                        notificationManager.notify(notificationId, notificationBuilder.build())
-
-                        Log.e(tag, "Failed to upload file: ${e.message}")
-                    }
-            }
+                            Log.e(tag, "Failed to upload file: ${e.message}")
+                        }
+                }
+        }
     }
 
     private fun notificationUploadChannel(channelId: String, importance: Int) {
@@ -330,13 +329,24 @@ class MainActivity : AppCompatActivity() {
 
         for (prefix in prefixes) {
             val prefixRef = storageRef.child(prefix)
-            val listResult = prefixRef.listAll().await()
+            size += getFolderSizeRecursively(prefixRef)
+        }
 
-            for(item in listResult.items){
-                val metadata = item.metadata.await()
+        return@withContext size
+    }
 
-                size += metadata.sizeBytes
-            }
+    private suspend fun getFolderSizeRecursively(folderRef: StorageReference): Long = withContext(Dispatchers.IO) {
+        var size = 0L
+
+        val listResult = folderRef.listAll().await()
+
+        for (item in listResult.items) {
+            val metadata = item.metadata.await()
+            size += metadata.sizeBytes
+        }
+
+        for (prefix in listResult.prefixes) {
+            size += getFolderSizeRecursively(prefix)
         }
 
         return@withContext size
@@ -350,7 +360,7 @@ class MainActivity : AppCompatActivity() {
         val units = arrayOf("bytes", "KB", "MB")
         val digitGroups = (log10(size) / log10(1024.0)).toInt()
         val sizeFormatted = String.format("%.2f", size / 1024.0.pow(digitGroups.toDouble()))
-        Log.d("i", sizeFormatted)
+        Log.i(tag, sizeFormatted)
         //val sizeRounded = BigDecimal(sizeFormatted).setScale(2, RoundingMode.HALF_UP).toDouble()
 
         return String.format("%s %s", sizeFormatted, units[digitGroups])
@@ -399,6 +409,10 @@ class MainActivity : AppCompatActivity() {
         return folderSize
     }
 
+    fun getFolderSizeLimit(): Long{
+        return folderSizeLimit
+    }
+
     fun changeFolderSize(fileSize: Long){
         folderSize += fileSize
     }
@@ -419,7 +433,18 @@ class MainActivity : AppCompatActivity() {
         sharedPreferencesUser.edit().clear().apply()
     }
 
+    fun removePreferencesStorage(){
+        sharedPreferencesStorage.edit().clear().apply()
+    }
+
     fun getSharedPreferencesUser(): SharedPreferences {
         return sharedPreferencesUser
+    }
+
+    private fun updateStarredFiles(newStarredFiles: List<String>) {
+        val fragment = supportFragmentManager.fragments.first().childFragmentManager.fragments.first()
+        if (fragment is Files) {
+            fragment.updateStarredFiles(newStarredFiles)
+        }
     }
 }

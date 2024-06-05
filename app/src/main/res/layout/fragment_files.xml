@@ -68,13 +68,54 @@
 
     </RelativeLayout>
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/go_to_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/search_layout"
+        android:layout_marginStart="25dp"
+        android:text="@string/file_explorer_to_parent"
+        android:textSize="12sp"
+        app:icon="@drawable/icon_arrow_up"
+        tools:ignore="TextContrastCheck" />
+
+    <LinearLayout
+        android:id="@+id/folders_list_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/go_to_parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/folders_list"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:layout_marginEnd="16dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/create_folder_button"
+            style="@style/Widget.MaterialComponents.Button.Icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical"
+            app:icon="@drawable/icon_create_folder"
+            app:iconSize="24dp"
+            tools:ignore="SpeakableTextPresentCheck" />
+    </LinearLayout>
+
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/no_files_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/search_layout"
+        android:layout_below="@+id/folders_list_layout"
         android:layout_centerInParent="true"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="20dp"
         android:text="@string/files_no_files"
         android:textColor="@color/black"
         android:textSize="20sp"
@@ -85,7 +126,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/files_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/search_layout" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/folders_list_layout"
+        android:layout_marginTop="10dp" />
 
 </RelativeLayout>
