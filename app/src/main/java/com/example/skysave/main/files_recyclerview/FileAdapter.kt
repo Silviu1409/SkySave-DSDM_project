@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.skysave.main.files_recyclerview
 
 import android.animation.Animator
@@ -26,6 +28,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -561,5 +564,14 @@ class FileAdapter(private val context: Context?, private val fragment: Files, pr
     private fun Int.dpToPx(): Int {
         val density = Resources.getSystem().displayMetrics.density
         return (this * density).roundToInt()
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        val dividerDrawable = ContextCompat.getDrawable(mainActivityContext, R.drawable.line_shape_horizontal)
+        val itemDecoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+        dividerDrawable?.let {
+            itemDecoration.setDrawable(it)
+        }
+        recyclerView.addItemDecoration(itemDecoration)
     }
 }

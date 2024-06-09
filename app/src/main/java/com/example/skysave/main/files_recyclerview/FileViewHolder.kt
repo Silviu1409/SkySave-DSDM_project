@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.skysave.main.files_recyclerview
 
 import android.view.View

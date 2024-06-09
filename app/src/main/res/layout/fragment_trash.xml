@@ -14,9 +14,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginVertical="15dp"
+        android:layout_marginVertical="@dimen/smaller_margin"
         android:visibility="invisible"
-        app:cardCornerRadius="4dp"
+        app:cardCornerRadius="@dimen/small_radius"
         app:cardElevation="4dp"
         app:cardUseCompatPadding="true"
         app:contentPadding="5dp"
@@ -37,10 +37,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/search_bar_card"
         android:layout_centerInParent="true"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="@dimen/smaller_margin"
         android:text="@string/trash_no_files"
         android:textColor="@color/black"
-        android:textSize="20sp"
+        android:textSize="@dimen/bigger_text_size"
         android:visibility="invisible"
         tools:ignore="VisualLintOverlap"
         tools:visibility="visible" />
@@ -48,7 +48,9 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/trash_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/search_bar_card" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/search_bar_card"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginEnd="@dimen/default_margin" />
 
 </RelativeLayout>

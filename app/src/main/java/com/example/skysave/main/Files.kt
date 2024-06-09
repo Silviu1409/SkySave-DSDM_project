@@ -86,14 +86,14 @@ class Files : Fragment(), FileAdapter.OnFileLongClickListener, FolderAdapter.OnF
             navigateToParentFolder()
         }
 
-        binding.searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
                 mainActivityContext.hideKeyboard()
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                binding.searchStarred.setImageResource(R.drawable.icon_starred_empty)
+                searchStarredView.setImageResource(R.drawable.icon_starred_empty)
 
                 if(newText == ""){
                     this.onQueryTextSubmit("")
@@ -104,14 +104,9 @@ class Files : Fragment(), FileAdapter.OnFileLongClickListener, FolderAdapter.OnF
             }
         })
 
-        binding.searchStarred.setOnClickListener {
-            if (!isStarred) {
-                isStarred = true
-                binding.searchStarred.setImageResource(R.drawable.icon_starred_filled)
-            } else {
-                isStarred = false
-                binding.searchStarred.setImageResource(R.drawable.icon_starred_empty)
-            }
+        searchStarredView.setOnClickListener {
+            isStarred = !isStarred
+            searchStarredView.isSelected = isStarred
             fileAdapter.filterStarred(isStarred)
         }
 

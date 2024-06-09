@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
-        android:paddingBottom="25dp"
+        android:paddingBottom="@dimen/big_padding"
         tools:context=".main.Profile">
 
         <androidx.appcompat.widget.AppCompatImageButton
@@ -32,8 +32,8 @@
             android:layout_height="20dp"
             android:layout_marginStart="-10dp"
             android:layout_marginTop="-8dp"
-            android:backgroundTint="#00FFFFFF"
-            android:foregroundTint="#00FFFFFF"
+            android:backgroundTint="@color/transparent"
+            android:foregroundTint="@color/transparent"
             android:src="@android:drawable/ic_menu_edit"
             app:layout_constraintStart_toEndOf="@+id/profile_icon"
             app:layout_constraintTop_toTopOf="@+id/profile_icon"
@@ -59,8 +59,8 @@
             android:layout_height="15dp"
             android:layout_marginStart="-5dp"
             android:layout_marginTop="5dp"
-            android:backgroundTint="#00FFFFFF"
-            android:foregroundTint="#00FFFFFF"
+            android:backgroundTint="@color/transparent"
+            android:foregroundTint="@color/transparent"
             android:src="@android:drawable/ic_menu_edit"
             app:layout_constraintStart_toEndOf="@+id/profile_alias"
             app:layout_constraintTop_toTopOf="@+id/profile_alias"
@@ -74,7 +74,7 @@
             android:layout_marginTop="50dp"
             android:text="@string/profile_email"
             android:textColor="@color/black"
-            android:textSize="16sp"
+            android:textSize="@dimen/default_text_size"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profile_alias" />
 
@@ -86,7 +86,7 @@
             android:layout_marginTop="50dp"
             android:text="@string/profile_file_limit"
             android:textColor="@color/black"
-            android:textSize="16sp"
+            android:textSize="@dimen/default_text_size"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profile_email" />
 
@@ -95,10 +95,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="75dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="@dimen/smallest_margin"
             android:text="@string/profile_storage_limit"
             android:textColor="@color/black"
-            android:textSize="16sp"
+            android:textSize="@dimen/default_text_size"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profile_file_limit" />
 
@@ -108,10 +108,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="75dp"
             android:background="@android:color/holo_blue_dark"
-            android:paddingLeft="20sp"
-            android:paddingTop="10sp"
-            android:paddingRight="20sp"
-            android:paddingBottom="10sp"
+            android:paddingLeft="@dimen/default_padding"
+            android:paddingTop="@dimen/small_padding"
+            android:paddingRight="@dimen/default_padding"
+            android:paddingBottom="@dimen/small_padding"
             android:text="@string/profile_logout"
             android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"

@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="16dp"
+    android:padding="@dimen/default_padding"
     android:drawablePadding="8dp"
     android:id="@+id/folder_name"
-    android:textSize="16sp"
-    android:textColor="@color/gray"
+    android:textSize="@dimen/default_text_size"
+    android:textColor="@color/light_gray"
     app:drawableStartCompat="@drawable/icon_folder"
-    app:drawableTint="@color/gray" />
+    app:drawableTint="@color/light_gray" />

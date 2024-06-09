@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.example.skysave.R
 import com.google.firebase.storage.StorageReference
@@ -54,8 +55,8 @@ class FolderAdapter(private val context: Context?, private val folders: ArrayLis
         holder.folderName.background = blueBorderDrawable
 
         val layoutParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
-        layoutParams.marginStart = 5.dpToPx()
-        layoutParams.marginEnd = 5.dpToPx()
+        layoutParams.marginStart = 10.dpToPx()
+        layoutParams.marginEnd = 10.dpToPx()
         holder.itemView.layoutParams = layoutParams
 
         holder.itemView.setOnClickListener {
@@ -89,5 +90,10 @@ class FolderAdapter(private val context: Context?, private val folders: ArrayLis
     fun removeFolderAt(folderPos: Int) {
         folders.removeAt(folderPos)
         notifyItemRemoved(folderPos)
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        val itemDecoration = DividerItemDecoration(context, DividerItemDecoration.HORIZONTAL)
+        recyclerView.addItemDecoration(itemDecoration)
     }
 }

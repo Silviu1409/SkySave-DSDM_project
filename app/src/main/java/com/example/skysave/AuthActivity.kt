@@ -1,4 +1,7 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.skysave
+
 
 import android.app.Activity
 import android.content.Intent
@@ -36,7 +39,7 @@ class AuthActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAuthBinding
 
     private val tag = "test"
-    private val errTag = "errtest"
+    private val errTag = "errTest"
 
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
@@ -45,7 +48,7 @@ class AuthActivity : AppCompatActivity() {
 
     private var user: FirebaseUser? = null
 
-    private var signedinPreviously = true
+    private var signedInPreviously = true
     private var logout: Boolean = false
 
     private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
@@ -62,7 +65,7 @@ class AuthActivity : AppCompatActivity() {
 
                             if (signInMethods.isNullOrEmpty()) {
                                 Log.d(tag, "Not signed in")
-                                signedinPreviously = false
+                                signedInPreviously = false
                             }
                         }
                     }
@@ -114,7 +117,7 @@ class AuthActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     val user = auth.currentUser
 
-                    if (!signedinPreviously){
+                    if (!signedInPreviously){
                         val userData = HashMap<String, Any>()
                         userData["email"] = user?.email.toString()
                         userData["alias"] = user?.displayName.toString()

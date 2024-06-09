@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="30dp"
-        android:layout_marginVertical="15dp"
+        android:layout_marginVertical="@dimen/smaller_margin"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -25,7 +25,7 @@
             android:layout_alignParentStart="true"
             android:layout_toStartOf="@+id/search_starred_card"
             android:visibility="invisible"
-            app:cardCornerRadius="4dp"
+            app:cardCornerRadius="@dimen/small_radius"
             app:cardElevation="4dp"
             app:cardUseCompatPadding="true"
             app:contentPadding="5dp"
@@ -51,7 +51,7 @@
             android:scaleX="0.75"
             android:scaleY="0.75"
             android:visibility="invisible"
-            app:cardCornerRadius="4dp"
+            app:cardCornerRadius="@dimen/small_radius"
             app:cardElevation="4dp"
             tools:visibility="visible">
 
@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:backgroundTint="@color/white"
-                android:src="@drawable/icon_starred_empty"
+                android:src="@drawable/filter_star_selector"
                 tools:ignore="SpeakableTextPresentCheck,ImageContrastCheck" />
 
         </com.google.android.material.card.MaterialCardView>
@@ -73,39 +73,45 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/search_layout"
-        android:layout_marginStart="25dp"
+        android:layout_marginStart="@dimen/bigger_margin"
         android:text="@string/file_explorer_to_parent"
-        android:textSize="12sp"
+        android:textSize="@dimen/smaller_text_size"
         app:icon="@drawable/icon_arrow_up"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Small"
+        app:strokeColor="@android:color/black"
+        app:strokeWidth="2dp"
         tools:ignore="TextContrastCheck" />
 
     <LinearLayout
         android:id="@+id/folders_list_layout"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/go_to_parent"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginTop="@dimen/smallest_margin"
+        android:layout_marginEnd="@dimen/default_margin"
+        android:layout_marginBottom="@dimen/smallest_margin"
         android:orientation="horizontal">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/folders_list"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/smaller_margin"
             android:layout_weight="1"
-            android:orientation="horizontal"
-            android:layout_marginEnd="16dp" />
+            android:orientation="horizontal" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/create_folder_button"
-            style="@style/Widget.MaterialComponents.Button.Icon"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center_vertical"
             app:icon="@drawable/icon_create_folder"
+            app:iconGravity="top"
             app:iconSize="24dp"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Small"
+            app:strokeColor="@android:color/black"
+            app:strokeWidth="2dp"
             tools:ignore="SpeakableTextPresentCheck" />
     </LinearLayout>
 
@@ -115,10 +121,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/folders_list_layout"
         android:layout_centerInParent="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="@dimen/default_margin"
         android:text="@string/files_no_files"
         android:textColor="@color/black"
-        android:textSize="20sp"
+        android:textSize="@dimen/bigger_text_size"
         android:visibility="invisible"
         tools:ignore="VisualLintOverlap"
         tools:visibility="visible" />
@@ -128,6 +134,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/folders_list_layout"
-        android:layout_marginTop="10dp" />
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginEnd="@dimen/default_margin" />
 
 </RelativeLayout>
