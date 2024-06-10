@@ -1,4 +1,13 @@
 package com.example.skysave.datatypes
 
+import io.realm.RealmList
+import io.realm.RealmObject
+import io.realm.annotations.PrimaryKey
+import io.realm.annotations.Required
 
-data class User(val uid: String, val email: String, var alias: String, var starred_files: List<String>) : java.io.Serializable
+open class User(
+    @PrimaryKey var uid: String = "",
+    @Required var email: String = "",
+    @Required var alias: String = "",
+    @Required var starred_files: RealmList<String> = RealmList()
+) : RealmObject()

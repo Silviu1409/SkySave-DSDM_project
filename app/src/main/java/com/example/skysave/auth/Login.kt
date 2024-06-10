@@ -41,7 +41,6 @@ class Login : Fragment() {
         return binding.root
     }
 
-    @Suppress("UNCHECKED_CAST")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -74,27 +73,17 @@ class Login : Fragment() {
                             val user = FirebaseAuth.getInstance().currentUser
 
                             if (user != null) {
-                                authActivityContext.getDB().collection("users")
-                                    .document(user.uid)
-                                    .get()
-                                    .addOnSuccessListener {document ->
-                                        if (document != null && document.exists()) {
-                                            val date = User(user.uid,
-                                                "" + document.getString("email"),
-                                                "" + document.getString("alias"),
-                                                document.get("starred_files") as? List<String> ?: listOf()
-                                            )
+                                val userData = authActivityContext.getRealm().where(User::class.java).equalTo("uid", user.uid).findFirst()
 
-                                            val intent = Intent(activity, MainActivity::class.java)
-                                            intent.putExtra("user", date)
-                                            startActivity(intent)
-                                        }
-                                    }
-                                    .addOnFailureListener { e ->
-                                        Log.e(authActivityContext.getErrTag(), "Error fetching documents: ${e.message}")
-                                        Toast.makeText(activity, "Couldn't log in", Toast.LENGTH_SHORT).show()
-                                    }
+                                if (userData != null) {
+                                    val intent = Intent(activity, MainActivity::class.java)
+                                    intent.putExtra("userId", user.uid)
+                                    startActivity(intent)
 
+                                } else {
+                                    Log.e(authActivityContext.getErrTag(), "User data not found in Realm")
+                                    Toast.makeText(activity, "Couldn't log in", Toast.LENGTH_SHORT).show()
+                                }
                             } else {
                                 Log.e(authActivityContext.getErrTag(), "User does not exist: ${task.exception}")
                                 Toast.makeText(activity, "Couldn't log in", Toast.LENGTH_SHORT).show()

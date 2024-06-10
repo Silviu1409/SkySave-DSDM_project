@@ -23,6 +23,7 @@ import com.example.skysave.databinding.FragmentFilesBinding
 import com.example.skysave.main.file_explorer.FileExplorerFragment
 import com.example.skysave.main.files_recyclerview.FileAdapter
 import com.example.skysave.main.folder_recyclerview.FolderAdapter
+import com.example.skysave.toRealmList
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
@@ -242,11 +243,13 @@ class Files : Fragment(), FileAdapter.OnFileLongClickListener, FolderAdapter.OnF
                                             starredFiles.remove(fileRef.toString())
                                             starredFiles.add(destinationRef.toString())
 
-                                            mainActivityContext.getUser()?.starred_files = starredFiles.toList()
+                                            mainActivityContext.getUser()?.starred_files = starredFiles.toRealmList()
 
-                                            mainActivityContext.getDb().collection("users")
-                                                .document(mainActivityContext.getUser()!!.uid)
-                                                .update("starred_files", starredFiles.toList())
+                                            mainActivityContext.getRealm().executeTransactionAsync{ realm ->
+                                                mainActivityContext.getUser()?.let { userObj ->
+                                                    realm.copyToRealmOrUpdate(userObj)
+                                                }
+                                            }
 
                                             mainActivityContext.getSharedPreferencesUser().edit().putStringSet("starred_files",
                                                 java.util.HashSet(mainActivityContext.getUser()!!.starred_files)).apply()
@@ -450,20 +453,21 @@ class Files : Fragment(), FileAdapter.OnFileLongClickListener, FolderAdapter.OnF
                                 val aux = starredFiles.toMutableList()
                                 aux.add(file.toString())
                                 starredFiles = aux.toList()
-                                mainActivityContext.getUser()?.starred_files = starredFiles
+                                mainActivityContext.getUser()?.starred_files = starredFiles.toRealmList()
 
-                                mainActivityContext.getDb().collection("users")
-                                    .document(mainActivityContext.getUser()!!.uid)
-                                    .update("starred_files", starredFiles)
-                                    .addOnSuccessListener {
-                                        Log.d(mainActivityContext.getTag(), "Added starred file ref to db")
-                                        mainActivityContext.getSharedPreferencesUser().edit().putStringSet("starred_files",
-                                            java.util.HashSet(mainActivityContext.getUser()!!.starred_files)
-                                        ).apply()
+                                mainActivityContext.getRealm().executeTransactionAsync({ realm ->
+                                    mainActivityContext.getUser()?.let { userObj ->
+                                        realm.copyToRealmOrUpdate(userObj)
                                     }
-                                    .addOnFailureListener { e ->
-                                        Log.e(mainActivityContext.getErrTag(), "Failed to add starred file ref to db: ${e.message}")
-                                    }
+                                }, {
+                                    Log.d(mainActivityContext.getTag(), "Added starred file ref to db")
+
+                                    mainActivityContext.getSharedPreferencesUser().edit().putStringSet("starred_files",
+                                        HashSet(mainActivityContext.getUser()!!.starred_files)
+                                    ).apply()
+                                }, {
+                                    Log.e(mainActivityContext.getTag(), "Failed to add starred file ref to db: $it")
+                                })
                             }
 
                             successfulOperations++
@@ -553,20 +557,21 @@ class Files : Fragment(), FileAdapter.OnFileLongClickListener, FolderAdapter.OnF
                             val aux = starredFiles.toMutableList()
                             aux.remove(file.toString())
                             starredFiles = aux.toList()
-                            mainActivityContext.getUser()?.starred_files = starredFiles
+                            mainActivityContext.getUser()?.starred_files = starredFiles.toRealmList()
 
-                            mainActivityContext.getDb().collection("users")
-                                .document(mainActivityContext.getUser()!!.uid)
-                                .update("starred_files", starredFiles)
-                                .addOnSuccessListener {
-                                    Log.d(mainActivityContext.getTag(), "Removed starred file ref from db")
-                                    mainActivityContext.getSharedPreferencesUser().edit().putStringSet("starred_files",
-                                        java.util.HashSet(mainActivityContext.getUser()!!.starred_files)
-                                    ).apply()
+                            mainActivityContext.getRealm().executeTransactionAsync({ realm ->
+                                mainActivityContext.getUser()?.let { userObj ->
+                                    realm.copyToRealmOrUpdate(userObj)
                                 }
-                                .addOnFailureListener { e ->
-                                    Log.e(mainActivityContext.getErrTag(), "Failed to remove starred file ref from db: ${e.message}")
-                                }
+                            }, {
+                                Log.d(mainActivityContext.getTag(), "Removed starred file ref from db")
+
+                                mainActivityContext.getSharedPreferencesUser().edit().putStringSet("starred_files",
+                                    HashSet(mainActivityContext.getUser()!!.starred_files)
+                                ).apply()
+                            }, {
+                                Log.e(mainActivityContext.getTag(), "Failed to remove starred file ref from db: $it")
+                            })
                         }
 
                         successfulOperations++

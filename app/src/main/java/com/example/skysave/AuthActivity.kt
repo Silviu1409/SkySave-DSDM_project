@@ -28,10 +28,11 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
+import io.realm.Realm
+import io.realm.RealmList
 import java.io.ByteArrayOutputStream
 
 
@@ -43,7 +44,7 @@ class AuthActivity : AppCompatActivity() {
 
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
-    private lateinit var db: FirebaseFirestore
+    private lateinit var realm: Realm
     private lateinit var storage: StorageReference
 
     private var user: FirebaseUser? = null
@@ -90,7 +91,7 @@ class AuthActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this,onBackPressedCallback)
 
         auth = FirebaseAuth.getInstance()
-        db = FirebaseFirestore.getInstance()
+        realm = Realm.getDefaultInstance()
         storage = Firebase.storage.reference
 
         createGoogleSignInClient()
@@ -109,7 +110,6 @@ class AuthActivity : AppCompatActivity() {
         launcher.launch(signInIntent)
     }
 
-    @Suppress("UNCHECKED_CAST")
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential)
@@ -124,78 +124,69 @@ class AuthActivity : AppCompatActivity() {
                         userData["starred_files"] = listOf<String>()
 
                         if (user != null) {
-                            db.collection("users")
-                                .document(user.uid)
-                                .set(userData)
-                                .addOnSuccessListener {
-                                    val glide = Glide.with(this)
+                            realm.executeTransactionAsync({ realm ->
+                                val newUser = realm.createObject(User::class.java, user.uid)
+                                newUser.email = userData["email"].toString()
+                                newUser.alias = userData["alias"].toString()
 
-                                    val requestBuilder = glide.asBitmap()
-                                        .load(user.photoUrl.toString())
-                                        .apply(RequestOptions().override(75, 75))
-                                    requestBuilder.into(object : CustomTarget<Bitmap>() {
-                                        override fun onResourceReady(
-                                            resource: Bitmap,
-                                            transition: Transition<in Bitmap>?
-                                        ) {
-                                            val folderRef = storage.child(user.uid)
-                                            val imageRef = folderRef.child("icon.jpg")
 
-                                            val baos = ByteArrayOutputStream()
-                                            resource.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-                                            val data = baos.toByteArray()
+                                newUser.starred_files = RealmList()
+                            }, {
+                                val glide = Glide.with(this)
 
-                                            val uploadTask = imageRef.putBytes(data)
-                                            uploadTask
-                                                .addOnSuccessListener {
-                                                    Log.d(tag, "Created folder for user")
+                                val requestBuilder = glide.asBitmap()
+                                    .load(user.photoUrl.toString())
+                                    .apply(RequestOptions().override(75, 75))
+                                requestBuilder.into(object : CustomTarget<Bitmap>() {
+                                    override fun onResourceReady(
+                                        resource: Bitmap,
+                                        transition: Transition<in Bitmap>?
+                                    ) {
+                                        val folderRef = storage.child(user.uid)
+                                        val imageRef = folderRef.child("icon.jpg")
 
-                                                    val newUser = User(user.uid, userData["email"].toString(), userData["alias"].toString(), listOf())
-                                                    val intent = Intent(this@AuthActivity, MainActivity::class.java)
-                                                    intent.putExtra("user", newUser)
-                                                    startActivity(intent)
-                                                }
-                                                .addOnFailureListener { e ->
-                                                    Log.e(errTag, "Error creating folder: ${e.message}")
-                                                    Toast.makeText(this@AuthActivity, "Couldn't create folder", Toast.LENGTH_SHORT).show()
-                                                }
+                                        val baos = ByteArrayOutputStream()
+                                        resource.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                                        val data = baos.toByteArray()
+
+                                        val uploadTask = imageRef.putBytes(data)
+                                        uploadTask.addOnSuccessListener {
+                                            Log.d(tag, "Created folder for user")
+
+                                            val intent = Intent(this@AuthActivity, MainActivity::class.java)
+                                            intent.putExtra("userId", user.uid)
+                                            startActivity(intent)
+                                        }.addOnFailureListener { e ->
+                                            Log.e(errTag, "Error creating folder: ${e.message}")
+                                            Toast.makeText(this@AuthActivity, "Couldn't create folder", Toast.LENGTH_SHORT).show()
                                         }
+                                    }
 
-                                        override fun onLoadCleared(placeholder: Drawable?) {
-                                            Log.w(tag, "Cancelled load")
-                                        }
-                                    })
-                                }
-                                .addOnFailureListener { e ->
-                                    Log.e(errTag, "Error fetching documents: ${e.message}")
-                                    Toast.makeText(this, "Couldn't register", Toast.LENGTH_SHORT).show()
-                                }
+                                    override fun onLoadCleared(placeholder: Drawable?) {
+                                        Log.w(tag, "Cancelled load")
+                                    }
+                                })
+                            }, {
+                                Log.e(errTag, "Error saving user data to Realm")
+                                Toast.makeText(this, "Couldn't register", Toast.LENGTH_SHORT).show()
+                            })
                         } else {
                             Log.e(errTag, "User wasn't created: ${task.exception}")
                             Toast.makeText(this, "Couldn't register", Toast.LENGTH_SHORT).show()
                         }
                     } else {
                         if (user != null) {
-                            db.collection("users")
-                                .document(user.uid)
-                                .get()
-                                .addOnSuccessListener {document ->
-                                    if (document != null && document.exists()) {
-                                        val dateUser = User(user.uid,
-                                            "" + document.getString("email"),
-                                            "" + document.getString("alias"),
-                                            document.get("starred_files") as? List<String> ?: listOf()
-                                        )
+                            val userData = realm.where(User::class.java).equalTo("uid", user.uid).findFirst()
 
-                                        val intent = Intent(this, MainActivity::class.java)
-                                        intent.putExtra("user", dateUser)
-                                        startActivity(intent)
-                                    }
-                                }
-                                .addOnFailureListener { e ->
-                                    Log.e(errTag, "Error fetching documents: ${e.message}")
-                                    Toast.makeText(this, "Couldn't log in", Toast.LENGTH_SHORT).show()
-                                }
+                            if (userData != null) {
+                                val intent = Intent(this, MainActivity::class.java)
+                                intent.putExtra("userId", user.uid)
+                                startActivity(intent)
+
+                            } else {
+                                Log.e(errTag, "User data not found in Realm")
+                                Toast.makeText(this, "Couldn't log in", Toast.LENGTH_SHORT).show()
+                            }
                         } else {
                             Log.e(errTag, "User does not exist: ${task.exception}")
                             Toast.makeText(this, "Couldn't log in", Toast.LENGTH_SHORT).show()
@@ -255,8 +246,8 @@ class AuthActivity : AppCompatActivity() {
         return errTag
     }
 
-    fun getDB(): FirebaseFirestore {
-        return db
+    fun getRealm(): Realm {
+        return realm
     }
 
     fun getStorage(): StorageReference{

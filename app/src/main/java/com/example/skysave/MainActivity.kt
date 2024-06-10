@@ -31,10 +31,10 @@ import com.example.skysave.main.Files
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
+import io.realm.Realm
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var folderRef: StorageReference
-    private lateinit var db: FirebaseFirestore
+    private lateinit var realm: Realm
 
     private var user: User? = null
 
@@ -132,7 +132,7 @@ class MainActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this,onBackPressedCallback)
 
         auth = FirebaseAuth.getInstance()
-        db = FirebaseFirestore.getInstance()
+        realm = Realm.getDefaultInstance()
 
         uri = intent.data
         if (uri != null) {
@@ -144,12 +144,13 @@ class MainActivity : AppCompatActivity() {
                 sharedPreferencesUser.getString("uid", "")!!,
                 sharedPreferencesUser.getString("email", "")!!,
                 sharedPreferencesUser.getString("alias", "")!!,
-                sharedPreferencesUser.getStringSet("starred_files", setOf<String>())?.toList()!!
+                sharedPreferencesUser.getStringSet("starred_files", setOf<String>())?.toList()!!.toRealmList()
             )
             updateStarredFiles(user!!.starred_files)
         } else {
             @Suppress("DEPRECATION")
-            user = intent.getSerializableExtra("user") as? User
+            val userId = intent.getSerializableExtra("userId") as? String
+            user = realm.where(User::class.java).equalTo("uid", userId).findFirst()
 
             if (user == null){
                 val intent = Intent(this, AuthActivity::class.java)
@@ -385,8 +386,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun getDb(): FirebaseFirestore {
-        return db
+    fun getRealm(): Realm {
+        return realm
     }
 
     fun getTag(): String{
