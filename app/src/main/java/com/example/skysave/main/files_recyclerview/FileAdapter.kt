@@ -37,6 +37,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.example.skysave.MainActivity
 import com.example.skysave.R
 import com.example.skysave.main.Files
+import com.example.skysave.toRealmList
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
@@ -304,18 +305,18 @@ class FileAdapter(private val context: Context?, private val fragment: Files, pr
                 val aux = starredFiles.toMutableList()
                 aux.add(file.toString())
                 starredFiles = aux.toList()
-                mainActivityContext.getUser()?.starred_files = starredFiles
+                mainActivityContext.getUser()?.starred_files = starredFiles.toRealmList()
 
-                mainActivityContext.getDb().collection("users")
-                    .document(mainActivityContext.getUser()!!.uid)
-                    .update("starred_files", starredFiles)
-                    .addOnSuccessListener {
-                        Log.d(mainActivityContext.getTag(), "Added starred file ref to db")
-                        mainActivityContext.getSharedPreferencesUser().edit().putStringSet("starred_files", HashSet(mainActivityContext.getUser()!!.starred_files)).apply()
+                mainActivityContext.getRealm().executeTransactionAsync ({ realm ->
+                    mainActivityContext.getUser()?.let { userObj ->
+                        realm.copyToRealmOrUpdate(userObj)
                     }
-                    .addOnFailureListener { e ->
-                        Log.e(mainActivityContext.getErrTag(), "Failed to add starred file ref to db: ${e.message}")
-                    }
+                }, {
+                    Log.d(mainActivityContext.getTag(), "Added starred file ref to db")
+                    mainActivityContext.getSharedPreferencesUser().edit().putStringSet("starred_files", HashSet(starredFiles)).apply()
+                }, {
+                    Log.e(mainActivityContext.getErrTag(), "Failed to add starred file ref to db: $it")
+                })
 
                 val emptyStar = ContextCompat.getDrawable(context, R.drawable.icon_starred_empty)
                 val fullStar = ContextCompat.getDrawable(context, R.drawable.icon_starred_filled)
@@ -340,18 +341,18 @@ class FileAdapter(private val context: Context?, private val fragment: Files, pr
                 val aux = starredFiles.toMutableList()
                 aux.remove(file.toString())
                 starredFiles = aux.toList()
-                mainActivityContext.getUser()?.starred_files = starredFiles
+                mainActivityContext.getUser()?.starred_files = starredFiles.toRealmList()
 
-                mainActivityContext.getDb().collection("users")
-                    .document(mainActivityContext.getUser()!!.uid)
-                    .update("starred_files", starredFiles)
-                    .addOnSuccessListener {
-                        Log.d(mainActivityContext.getTag(), "Removed starred file ref from db")
-                        mainActivityContext.getSharedPreferencesUser().edit().putStringSet("starred_files", HashSet(mainActivityContext.getUser()!!.starred_files)).apply()
+                mainActivityContext.getRealm().executeTransactionAsync ({ realm ->
+                    mainActivityContext.getUser()?.let { userObj ->
+                        realm.copyToRealmOrUpdate(userObj)
                     }
-                    .addOnFailureListener { e ->
-                        Log.e(mainActivityContext.getErrTag(), "Failed to remove starred file ref from db: ${e.message}")
-                    }
+                }, {
+                    Log.d(mainActivityContext.getTag(), "Removed starred file ref from db")
+                    mainActivityContext.getSharedPreferencesUser().edit().putStringSet("starred_files", HashSet(starredFiles)).apply()
+                }, {
+                    Log.e(mainActivityContext.getErrTag(), "Failed to remove starred file ref from db: $it")
+                })
 
                 val emptyStar = ContextCompat.getDrawable(context, R.drawable.icon_starred_empty)
                 val fullStar = ContextCompat.getDrawable(context, R.drawable.icon_starred_filled)
@@ -501,21 +502,21 @@ class FileAdapter(private val context: Context?, private val fragment: Files, pr
                             val aux = starredFiles.toMutableList()
                             aux.remove(file.toString())
                             starredFiles = aux.toList()
-                            mainActivityContext.getUser()?.starred_files = starredFiles
+                            mainActivityContext.getUser()?.starred_files = starredFiles.toRealmList()
 
-                            mainActivityContext.getDb().collection("users")
-                                .document(mainActivityContext.getUser()!!.uid)
-                                .update("starred_files", starredFiles)
-                                .addOnSuccessListener {
-                                    tempLocalFile.delete()
-                                    file.delete()
+                            mainActivityContext.getRealm().executeTransactionAsync ({ realm ->
+                                mainActivityContext.getUser()?.let { userObj ->
+                                    realm.copyToRealmOrUpdate(userObj)
+                                }
+                            }, {
+                                tempLocalFile.delete()
+                                file.delete()
 
-                                    Log.d(mainActivityContext.getTag(), "File moved successfully!")
-                                    Toast.makeText(context, "${newFile.name} moved to trash!", Toast.LENGTH_SHORT).show()
-                                }
-                                .addOnFailureListener { e ->
-                                    Log.e(mainActivityContext.getErrTag(), "Failed to remove starred file ref from db: ${e.message}")
-                                }
+                                Log.d(mainActivityContext.getTag(), "File moved successfully!")
+                                Toast.makeText(context, "${newFile.name} moved to trash!", Toast.LENGTH_SHORT).show()
+                            }, {
+                                Log.e(mainActivityContext.getErrTag(), "Failed to remove starred file ref from db: $it")
+                            })
                         }
                         .addOnFailureListener { e ->
                             tempLocalFile.delete()

@@ -21,10 +21,12 @@ import com.bumptech.glide.request.transition.Transition
 import com.example.skysave.AuthActivity
 import com.example.skysave.R
 import com.example.skysave.databinding.FragmentRegisterBinding
+import com.example.skysave.datatypes.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import io.realm.RealmList
 import java.io.ByteArrayOutputStream
 
 
@@ -75,60 +77,53 @@ class Register : Fragment() {
                         if (task.isSuccessful) {
                             val user = FirebaseAuth.getInstance().currentUser
 
-                            val date = HashMap<String, Any>()
-                            date["email"] = email
-                            date["alias"] = alias
-                            date["starred_files"] = listOf<String>()
-
                             if (user != null) {
-                                authActivityContext.getDB().collection("users")
-                                    .document(user.uid)
-                                    .set(date)
-                                    .addOnSuccessListener {
-                                        val glide = Glide.with(this)
+                                val userDetails = User(user.uid, email, alias, RealmList())
 
-                                        val requestBuilder = glide.asBitmap()
-                                            .load(R.drawable.default_icon)
-                                            .apply(RequestOptions().override(75, 75))
+                                authActivityContext.getRealm().executeTransactionAsync({ realm ->
+                                    realm.copyToRealmOrUpdate(userDetails)
+                                }, {
+                                    val glide = Glide.with(this)
 
-                                        requestBuilder.into(object : CustomTarget<Bitmap>() {
-                                            override fun onResourceReady(
-                                                resource: Bitmap,
-                                                transition: Transition<in Bitmap>?
-                                            ) {
-                                                val folderRef = authActivityContext.getStorage().child(user.uid)
-                                                val imageRef = folderRef.child("icon.jpg")
+                                    val requestBuilder = glide.asBitmap()
+                                        .load(R.drawable.default_icon)
+                                        .apply(RequestOptions().override(75, 75))
 
-                                                val baos = ByteArrayOutputStream()
-                                                resource.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-                                                val data = baos.toByteArray()
+                                    requestBuilder.into(object : CustomTarget<Bitmap>() {
+                                        override fun onResourceReady(
+                                            resource: Bitmap,
+                                            transition: Transition<in Bitmap>?
+                                        ) {
+                                            val folderRef = authActivityContext.getStorage().child(user.uid)
+                                            val imageRef = folderRef.child("icon.jpg")
 
-                                                val uploadTask = imageRef.putBytes(data)
-                                                uploadTask
-                                                    .addOnSuccessListener {
-                                                        Log.d(authActivityContext.getTag(), "Created folder for user and registered successfully")
+                                            val baos = ByteArrayOutputStream()
+                                            resource.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                                            val data = baos.toByteArray()
 
-                                                        Toast.makeText(activity, "Registered successfully! Go to the login page to log in.", Toast.LENGTH_LONG).show()
+                                            val uploadTask = imageRef.putBytes(data)
+                                            uploadTask.addOnSuccessListener {
+                                                Log.d(authActivityContext.getTag(), "Created folder for user and registered successfully")
 
-                                                        binding.registerEmail.text?.clear()
-                                                        binding.registerPassword.text?.clear()
-                                                        binding.registerAlias.text?.clear()
-                                                    }
-                                                    .addOnFailureListener { e ->
-                                                        Log.e(authActivityContext.getErrTag(), "Error creating folder: ${e.message}")
-                                                        Toast.makeText(activity, "Couldn't create folder", Toast.LENGTH_SHORT).show()
-                                                    }
+                                                Toast.makeText(activity, "Registered successfully! Go to the login page to log in.", Toast.LENGTH_LONG).show()
+
+                                                binding.registerEmail.text?.clear()
+                                                binding.registerPassword.text?.clear()
+                                                binding.registerAlias.text?.clear()
+                                            }.addOnFailureListener { e ->
+                                                Log.e(authActivityContext.getErrTag(), "Error creating folder: ${e.message}")
+                                                Toast.makeText(activity, "Couldn't create folder", Toast.LENGTH_SHORT).show()
                                             }
+                                        }
 
-                                            override fun onLoadCleared(placeholder: Drawable?) {
-                                                Log.w(authActivityContext.getTag(), "Cancelled load")
-                                            }
-                                        })
-                                    }
-                                    .addOnFailureListener { e ->
-                                        Log.e(authActivityContext.getErrTag(), "Error fetching documents: ${e.message}")
-                                        Toast.makeText(activity, "Couldn't register", Toast.LENGTH_SHORT).show()
-                                    }
+                                        override fun onLoadCleared(placeholder: Drawable?) {
+                                            Log.w(authActivityContext.getTag(), "Cancelled load")
+                                        }
+                                    })
+                                }, {
+                                    Log.e(authActivityContext.getErrTag(), "Error saving user data to Realm")
+                                    Toast.makeText(activity, "Couldn't register", Toast.LENGTH_SHORT).show()
+                                })
                             } else {
                                 Log.e(authActivityContext.getErrTag(), "User wasn't created: ${task.exception}")
                                 Toast.makeText(activity, "Couldn't register", Toast.LENGTH_SHORT).show()

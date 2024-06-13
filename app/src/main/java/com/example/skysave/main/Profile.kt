@@ -105,23 +105,24 @@ class Profile : Fragment() {
                 val newUserAlias = binding.profileAlias.text.toString()
                 mainActivityContext.getUser()!!.alias = newUserAlias
 
-                mainActivityContext.getDb().collection("users")
-                    .document(mainActivityContext.getUser()!!.uid)
-                    .update("alias", newUserAlias)
-                    .addOnSuccessListener {
-                        Log.d(mainActivityContext.getTag(), "Updated user alias!")
-                        Toast.makeText(context, "Updated alias!", Toast.LENGTH_SHORT).show()
+                mainActivityContext.getRealm().executeTransactionAsync ({ realm ->
+                    mainActivityContext.getUser()?.let { userObj ->
+                        realm.copyToRealmOrUpdate(userObj)
+                    }
+                }, {
+                    Log.d(mainActivityContext.getTag(), "Updated user alias!")
 
-                        mainActivityContext.getSharedPreferencesUser().edit().putString("alias", newUserAlias).apply()
-                        val newFolder = File(mainActivityContext.getFileDir().parentFile, newUserAlias)
-                        mainActivityContext.getFileDir().renameTo(newFolder)
-                        mainActivityContext.setFileDir(newFolder)
-                        Log.d(mainActivityContext.getTag(), "Renamed user folder!")
-                    }
-                    .addOnFailureListener {  e ->
-                        Log.e(mainActivityContext.getErrTag(), "Could not update user alias: ${e.message}")
-                        Toast.makeText(context, "Cannot update alias!", Toast.LENGTH_SHORT).show()
-                    }
+                    mainActivityContext.getSharedPreferencesUser().edit().putString("alias", newUserAlias).apply()
+                    val newFolder = File(mainActivityContext.getFileDir().parentFile, newUserAlias)
+                    mainActivityContext.getFileDir().renameTo(newFolder)
+                    mainActivityContext.setFileDir(newFolder)
+                    Log.d(mainActivityContext.getTag(), "Renamed user folder!")
+
+                    Toast.makeText(context, "Updated alias!", Toast.LENGTH_SHORT).show()
+                }, {
+                    Log.e(mainActivityContext.getErrTag(), "Could not update user alias: $it")
+                    Toast.makeText(context, "Cannot update alias!", Toast.LENGTH_SHORT).show()
+                })
 
                 mainActivityContext.hideKeyboard()
 
